@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title>Validate</title>
+   <style>
+      .error {color: #FF0000;}
+	  .fieldname {
+           float:left;
+           width:125px;
+        }
+   </style>
+   <script src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js'></script>
+</head>
+
+<body>
+<form id="registerForm" action="./register.php" onsubmit="return validate()" method="post">
+    <span class='fieldname'>Username</span>
+	<input type='text' id= 'usr' name='user' value="">
+    <span class='error' id='usrErr'></span>
+    <br><br>
+    <span class='fieldname'>Password</span>
+    <input type='password' id='passw' name='pass' value="">
+    <span class='error' id='passErr'></span>
+    <br><br>
+    <span class='fieldname'>Confirm Password</span>
+    <input type='password' id='passwC' name='passConfirm' value="">
+    <span class='error' id='confirmErr'></span>
+    <br><br>
+    <span class='fieldname'>&nbsp;</span>
+    <input type='submit' value='Login'>
+</form>
+
+<script type="text/javascript">
+function validate(){
+        document.getElementById("usrErr").innerHTML = "";
+		document.getElementById("passErr").innerHTML = "";
+		document.getElementById("confirmErr").innerHTML = "";
+		
+		//Check password errors
+		var password1 = document.getElementById('passw').value; 
+        var password2 = document.getElementById('passwC').value; 
+  
+         // If password not entered 
+          if (password1 == '') 
+            document.getElementById("passErr").innerHTML = "Please enter password"; 
+                      
+        // If password not confirmed 
+          if (password2 == '') 
+           document.getElementById("confirmErr").innerHTML = "Please enter password again"; 
+		   
+         // If passwords don't match     
+          if (password1 != password2) 
+            document.getElementById("confirmErr").innerHTML = "Password did not match: Please try again"; 
+			
+         //If password incorrect
+		 if(password1 != '' && (password1.length < 6 || !/[A-Z]/.test(password1) || !/[a-z]/.test(password1) || !/[0-9]/.test(password1)))
+		     document.getElementById("passErr").innerHTML = "The password must contain at least 6 characters, 1 uppercase letter, 1 lowercase letter and 1 digit.";
+          
+		 //Check username validity
+		  var username = document.getElementById('usr').value;
+		  if(username.length < 3 || username.length > 10 || /\W/.test(username))
+		     document.getElementById("usrErr").innerHTML = "The username must be not shorter than 3 characters and not longer than 10 characters. Only alphanumeric charecters and _ allowed.";
+		  
+		  var err1 = document.getElementById("usrErr").innerHTML;
+          var err2 = document.getElementById("passErr").innerHTML;
+          var err3 = document.getElementById("confirmErr").innerHTML;	
+
+         //See the user input in he console
+         var frm = $('#registerForm');
+		 var str = frm.serialize();
+		 console.log(str);
+		 
+		 //Everything ok, send form to the server
+         if(err1 == "" && err2 == "" && err3 == "")   
+             $.ajax({
+                type: frm.attr('method'),
+                url: frm.attr('action'),
+                data: frm.serialize(),
+                success: function (data) {
+                   console.log('Submission was successful.');
+                },
+                error: function (data) {
+                  console.log('An error occurred.');
+                },
+             });
+	
+	   return false; //prevent the default behaviour of submitting the form
+    }
+</script>
+
+</body>
+</html>
